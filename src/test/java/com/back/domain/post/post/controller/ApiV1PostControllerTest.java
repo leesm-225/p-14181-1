@@ -36,7 +36,7 @@ public class ApiV1PostControllerTest {
     void t1() throws Exception {
         ResultActions resultActions = mvc
                 .perform(
-                        post("/api/v1/posts?username=user1")
+                        post("/api/v1/posts?username=user1&password=1234")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
