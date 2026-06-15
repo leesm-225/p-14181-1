@@ -43,11 +43,6 @@ public class ApiV1MemberController {
     public RsData<MemberDto> join(
             @RequestBody @Valid MemberJoinReqBody reqBody
     ) {
-        memberService.findByUsername(reqBody.username)
-                .ifPresent(_ -> {
-                    throw new ServiceException("409-1", "이미 존재하는 아이디입니다.");
-                });
-
         Member member = memberService.join(
                 reqBody.username(),
                 reqBody.password(),
