@@ -30,12 +30,7 @@ public class Rq {
 
             apiKey = headerAuthorization.substring("Bearer ".length()).trim();
         } else {
-            apiKey = Arrays.stream(Optional.ofNullable(req.getCookies()).orElse(new Cookie[0]))
-                    .filter(cookie -> "apiKey".equals(cookie.getName()))
-                    .map(Cookie::getValue)
-                    .filter(value -> value != null && !value.isBlank())
-                    .findFirst()
-                    .orElse("");
+            apiKey = getCookieValue("apiKey", "");
         }
 
         if (apiKey.isBlank())
@@ -46,6 +41,15 @@ public class Rq {
                 .orElseThrow(() -> new ServiceException("401-3", "API 키가 유효하지 않습니다."));
 
         return member;
+    }
+
+    private String getCookieValue(String name, String defaultValue) {
+        return Arrays.stream(Optional.ofNullable(req.getCookies()).orElse(new Cookie[0]))
+                .filter(cookie -> name.equals(cookie.getName()))
+                .map(Cookie::getValue)
+                .filter(value -> value != null && !value.isBlank())
+                .findFirst()
+                .orElse(defaultValue);
     }
 
     public void setCookie(String name, String value) {
