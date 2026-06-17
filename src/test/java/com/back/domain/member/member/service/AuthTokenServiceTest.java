@@ -80,7 +80,7 @@ public class AuthTokenServiceTest {
     }
 
     @Test
-    @DisplayName("Ut.jwt.toString 를 통해서 JWT 생성, {name=\"Paul\", age=23}")
+    @DisplayName("Ut.jwt.toString 를 통해서 JWT 생성, {name=\"Paul\", age=23}, 그리고 jwt 유효성 체크")
     void t3() {
         String jwt = Ut.jwt.toString(
                 secret,
@@ -90,7 +90,10 @@ public class AuthTokenServiceTest {
 
         assertThat(jwt).isNotBlank();
 
-        System.out.println("jwt = " + jwt);
+        assertThat(
+                Ut.jwt.isValid(secret, jwt)
+        )
+                .isTrue();
     }
 
     @Test
