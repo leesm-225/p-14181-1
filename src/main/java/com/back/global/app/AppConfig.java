@@ -1,5 +1,6 @@
 package com.back.global.app;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
@@ -7,7 +8,8 @@ import org.springframework.core.env.Environment;
 public class AppConfig {
     private static Environment environment;
 
-    public AppConfig(Environment environment) {
+    @Autowired
+    public void setEnvironment(Environment environment) {
         AppConfig.environment = environment;
     }
 
