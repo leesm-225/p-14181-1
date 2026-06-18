@@ -5,7 +5,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.UUID;
 
@@ -19,6 +18,11 @@ public class Member extends BaseEntity {
     private String nickname;
     @Column(unique = true)
     private String apiKey;
+
+    public Member(int id, String username) {
+        this.id = id;
+        this.username = username;
+    }
 
     public Member(String username, String password, String nickname) {
         this.username = username;
