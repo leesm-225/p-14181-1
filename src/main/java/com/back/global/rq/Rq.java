@@ -1,27 +1,36 @@
 package com.back.global.rq;
 
 import com.back.domain.member.member.entity.Member;
+import com.back.global.security.SecurityUser;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.Arrays;
 import java.util.Optional;
 
-@RequestScope
 @Component
 @RequiredArgsConstructor
 public class Rq {
     private final HttpServletRequest req;
     private final HttpServletResponse resp;
-    @Getter
-    @Setter
-    private Member actor;
+
+    public Member getActor() {
+        return Optional.ofNullable(
+                        SecurityContextHolder
+                                .getContext()
+                                .getAuthentication()
+                )
+                .map(Authentication::getPrincipal)
+                .filter(principal -> principal instanceof SecurityUser)
+                .map(principal -> (SecurityUser) principal)
+                .map(securityUser -> new Member(securityUser.getId(), securityUser.getUsername(), securityUser.getName()))
+                .orElse(null);
+    }
 
     public String getHeader(String name, String defaultValue) {
         return Optional
@@ -41,16 +50,11 @@ public class Rq {
     }
 
     public String getCookieValue(String name, String defaultValue) {
-        return Optional
-                .ofNullable(req.getCookies())
-                .flatMap(
-                        cookies ->
-                                Arrays.stream(cookies)
-                                        .filter(cookie -> cookie.getName().equals(name))
-                                        .map(Cookie::getValue)
-                                        .filter(value -> !value.isBlank())
-                                        .findFirst()
-                )
+        return Arrays.stream(Optional.ofNullable(req.getCookies()).orElse(new Cookie[0]))
+                .filter(cookie -> name.equals(cookie.getName()))
+                .map(Cookie::getValue)
+                .filter(value -> value != null && !value.isBlank())
+                .findFirst()
                 .orElse(defaultValue);
     }
 
