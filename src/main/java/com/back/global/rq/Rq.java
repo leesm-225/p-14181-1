@@ -64,11 +64,12 @@ public class Rq {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
+        cookie.setDomain("localhost");
+        cookie.setSecure(true);
+        cookie.setAttribute("SameSite", "Strict");
 
-        // 값이 없다면 해당 쿠키변수를 삭제하라는 뜻
-        if (value.isBlank()) {
-            cookie.setMaxAge(0);
-        }
+        if (value.isBlank()) cookie.setMaxAge(0);
+        else cookie.setMaxAge(60 * 60 * 24 * 365);//쿠키를 1년정도 유지. 설정하지 않으면 브라우저가 꺼진 시점에 쿠키가 삭제됨
 
         resp.addCookie(cookie);
     }
